@@ -1,3 +1,4 @@
+from main import app
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import COOLDOWN_SECONDS, REFERRAL_BONUS_LIMIT
@@ -13,6 +14,7 @@ from bot.referral import (
 import time
 
 
+@app.on_message(filters.command("start"))
 async def start_command(client: Client, message: Message):
     user_id = message.from_user.id
     mention = message.from_user.mention(style="markdown")

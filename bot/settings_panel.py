@@ -1,3 +1,4 @@
+from main import app
 from pyrogram import Client, filters
 from pyrogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from config import ADMINS, MEDIA_CHANNEL_ID
@@ -6,6 +7,7 @@ from bot.media import get_random_media
 
 
 # ✅ Admin Panel Entry Point
+@app.on_message(filters.command("settings"))
 async def open_settings_panel(client: Client, message: Message):
     if message.from_user.id not in ADMINS:
         print(f"[DENIED] User {message.from_user.id} is not in ADMINS")
@@ -27,6 +29,7 @@ async def open_settings_panel(client: Client, message: Message):
 
 
 # ✅ Set Force-Sub Channel
+@app.on_callback_query(filters.regex("add_fsub"))
 async def add_fsub_handler(client: Client, callback_query: CallbackQuery):
     await db.set_setting("awaiting_fsub", callback_query.from_user.id)
     await callback_query.message.edit(
@@ -37,6 +40,7 @@ async def add_fsub_handler(client: Client, callback_query: CallbackQuery):
 
 
 # ✅ Handle Forwarded Message
+@app.on_message(filters.forwarded)
 async def handle_forwarded_channel(client: Client, message: Message):
     awaiting = await db.get_setting("awaiting_fsub")
     if not awaiting or int(awaiting) != message.from_user.id:
@@ -59,6 +63,7 @@ async def handle_forwarded_channel(client: Client, message: Message):
 
 
 # ✅ Index Media
+@app.on_callback_query(filters.regex("set_media"))
 async def set_media_handler(client: Client, callback_query: CallbackQuery):
     from bot.media import set_media_pool
     await set_media_pool(client, callback_query.message)
@@ -66,6 +71,7 @@ async def set_media_handler(client: Client, callback_query: CallbackQuery):
 
 
 # ✅ Preview Random Media
+@app.on_callback_query(filters.regex("preview_media"))
 async def preview_handler(client: Client, callback_query: CallbackQuery):
     media = await get_random_media()
     if not media:
@@ -83,6 +89,7 @@ async def preview_handler(client: Client, callback_query: CallbackQuery):
 
 
 # ✅ View Stats
+@app.on_callback_query(filters.regex("view_stats"))
 async def stats_handler(client: Client, callback_query: CallbackQuery):
     users = await db.get_all_users()
     total_users = len(list(users))
@@ -98,6 +105,7 @@ async def stats_handler(client: Client, callback_query: CallbackQuery):
 
 
 # 🔙 Back to Main Panel
+@app.on_callback_query(filters.regex("back_to_settings"))
 async def back_to_settings(client: Client, callback_query: CallbackQuery):
     await open_settings_panel(client, callback_query.message)
     await callback_query.answer("Returned to settings.")

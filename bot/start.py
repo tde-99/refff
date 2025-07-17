@@ -13,7 +13,6 @@ from bot.referral import (
 import time
 
 
-@Client.on_message(filters.command("start"))
 async def start_command(client: Client, message: Message):
     user_id = message.from_user.id
     mention = message.from_user.mention(style="markdown")

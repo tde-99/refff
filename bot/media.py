@@ -7,7 +7,6 @@ from bot import database as db
 
 
 # 🎞️ /setmedia — Admin-only: Index media from your channel into the pool
-@Client.on_message(filters.command("setmedia"))
 async def set_media_pool(client: Client, message: Message):
     if message.from_user.id not in ADMINS:
         return await message.reply("🚫 You are not authorized to use this command.")

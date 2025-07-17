@@ -18,4 +18,14 @@ REFERRAL_BONUS_LIMIT = int(os.getenv("REFERRAL_BONUS_LIMIT", 3))
 ACCESS_TIME_LIMIT = int(os.getenv("ACCESS_TIME_LIMIT", 86400))  # 24h
 
 STRICT_MODE = os.getenv("STRICT_MODE", "true").lower() == "true"
-ADMINS = list(map(int, os.getenv("ADMINS", "").split()))
+
+admins_env = os.getenv("ADMINS")
+if not admins_env:
+    print("⚠️ ADMINS environment variable not set. Some features may be restricted.")
+    ADMINS = []
+else:
+    try:
+        ADMINS = list(map(int, admins_env.split()))
+    except ValueError:
+        print("❌ Invalid ADMINS environment variable. Please provide a space-separated list of user IDs.")
+        ADMINS = []

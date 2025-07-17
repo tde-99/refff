@@ -1,5 +1,9 @@
+import logging
 from pyrogram import Client, filters
 from config import API_ID, API_HASH, BOT_TOKEN
+
+# Enable logging
+logging.basicConfig(level=logging.INFO)
 
 app = Client(
     "referral_bot",

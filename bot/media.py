@@ -17,6 +17,15 @@ async def set_media_pool(client: Client, message: Message):
     saved, skipped, total = 0, 0, 0
 
     try:
+        # Check if bot is admin in the channel
+        try:
+            chat = await client.get_chat(MEDIA_CHANNEL_ID)
+            me = await chat.get_member((await client.get_me()).id)
+            if me.status not in ["administrator", "creator"]:
+                return await message.reply(f"❌ I am not an admin in the media channel: `{MEDIA_CHANNEL_ID}`")
+        except Exception as e:
+            return await message.reply(f"❌ Error checking admin status in media channel: `{e}`")
+
         async for msg in client.iter_messages(MEDIA_CHANNEL_ID):
             total += 1
 
